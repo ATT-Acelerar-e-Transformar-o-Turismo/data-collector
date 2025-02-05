@@ -5,19 +5,15 @@ services:
     build: .
     container_name: data-collector
     restart: always
-    ports:
-      - "8080:8080"
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
     depends_on:
-      - redis
+      - data-collector-redis
 
-  redis:
+  data-collector-redis:
     image: "redis:alpine"
-    container_name: redis
+    container_name: data-collector-redis
     restart: always
-    ports:
-      - "6379:6379"
 
 
