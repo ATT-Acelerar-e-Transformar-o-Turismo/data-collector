@@ -1,10 +1,10 @@
-version: "3.8"
-
 services:
   data-collector:
     build: .
     container_name: data-collector
     restart: always
+    networks:
+      - att-network
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
