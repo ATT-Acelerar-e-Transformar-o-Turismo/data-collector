@@ -1,2 +1,6 @@
-fastapi==0.115.8
-uvicorn==0.34.0
+fastapi==0.115.12
+aio-pika==9.4.0
+python-dotenv==1.0.1
+uvicorn==0.34.2
+pydantic==2.6.1
+redis==6.0.0

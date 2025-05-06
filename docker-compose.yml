@@ -6,7 +6,7 @@ services:
     networks:
       - att-network
     environment:
-      - REDIS_HOST=redis
+      - REDIS_HOST=data-collector-redis
       - REDIS_PORT=6379
     depends_on:
       - data-collector-redis
