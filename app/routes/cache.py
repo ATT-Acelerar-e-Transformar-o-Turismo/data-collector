@@ -3,7 +3,7 @@ from services.cache_service import CacheService
 from typing import Dict, Any, Optional
 from schemas.message import DataMessage
 
-router = APIRouter(prefix="/cache", tags=["cache"])
+router = APIRouter(tags=["cache"])
 
 @router.get("/last-message")
 async def get_last_message(

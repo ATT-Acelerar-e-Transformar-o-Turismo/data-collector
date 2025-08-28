@@ -6,8 +6,9 @@ services:
     networks:
       - data-collector-network
     environment:
-      - REDIS_HOST=data-collector-redis
-      - REDIS_PORT=6379
+      - REDIS_URL=redis://data-collector-redis:6379
+      - DATA_RABBITMQ_URL=amqp://user:password@data-mq:5672/
+      - SERVICES_RABBITMQ_URL=amqp://user:password@services-mq:5672/
       - ORIGINS=${ORIGINS:-localhost}
     depends_on:
       - data-collector-redis
