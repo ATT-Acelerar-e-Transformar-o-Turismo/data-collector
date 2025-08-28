@@ -4,16 +4,36 @@ services:
     container_name: data-collector
     restart: always
     networks:
-      - att-network
+      - data-collector-network
     environment:
       - REDIS_HOST=data-collector-redis
       - REDIS_PORT=6379
+      - ORIGINS=${ORIGINS:-localhost}
     depends_on:
       - data-collector-redis
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    develop:
+      watch:
+        - action: sync
+          path: ./app
+          target: /app
+          ignore:
+            - __pycache__/
+        - action: rebuild
+          path: requirements.txt
 
   data-collector-redis:
     image: "redis:alpine"
     container_name: data-collector-redis
     restart: always
+    networks:
+      - data-collector-network
 
-
+networks:
+  data-collector-network:
+    name: data-collector-network
