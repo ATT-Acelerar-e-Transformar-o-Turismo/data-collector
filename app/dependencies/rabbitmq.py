@@ -5,9 +5,6 @@ import logging
 from typing import Callable, Awaitable, Dict, List, Optional
 from config import settings
 
-data_mq_client = RabbitMQClient(url=settings.DATA_RABBITMQ_URL)
-services_mq_client = RabbitMQClient(url=settings.SERVICES_RABBITMQ_URL)
-
 logger = logging.getLogger(__name__)
 
 class RabbitMQClient:
@@ -115,3 +112,6 @@ def services_consumer(queue_name: str):
         logger.info(f"Services consumer '{func.__name__}' registered for queue '{queue_name}'")
         return func
     return decorator
+
+data_mq_client = RabbitMQClient(url=settings.DATA_RABBITMQ_URL)
+services_mq_client = RabbitMQClient(url=settings.SERVICES_RABBITMQ_URL)
