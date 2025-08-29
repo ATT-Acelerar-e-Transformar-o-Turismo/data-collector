@@ -16,6 +16,7 @@ class Settings(BaseSettings):
     # Queue Configuration
     DATA_QUEUE: str = Field(default="data", env="DATA_QUEUE")
     COLLECTED_DATA_QUEUE: str = Field(default="collected_data", env="COLLECTED_DATA_QUEUE")
+    VALIDATION_ERROR_QUEUE: str = Field(default="validation_errors", env="VALIDATION_ERROR_QUEUE")
 
     # Redis Configuration
     REDIS_URL: str = Field(default="redis://redis:6379", env="REDIS_URL")

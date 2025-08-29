@@ -1,13 +1,13 @@
 from fastapi import APIRouter
 from services.cache_service import CacheService
 from typing import Dict, Any, Optional
-from schemas.message import DataMessage
+from schemas.wrapper_message import WrapperMessage
 
 router = APIRouter()
 cache_service = CacheService()
 
 @router.get("/last-message")
-async def get_last_message() -> Optional[DataMessage]:
+async def get_last_message() -> Optional[WrapperMessage]:
     """
     Get the last message received by the data collector
     """
