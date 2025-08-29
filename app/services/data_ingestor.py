@@ -43,6 +43,9 @@ async def handle_data_message(message: aio_pika.abc.AbstractIncomingMessage):
         logger.info(f"Message validated and forwarded: wrapper_id={validated_message.wrapper_id}")
         await message.ack()
         
+    except (json.JSONDecodeError, ValueError) as e:
+        logger.error(f"Invalid message format: {str(e)}")
+        await message.reject(requeue=False)
     except Exception as e:
-        logger.error(f"Error processing message: {str(e)}")
+        logger.error(f"Unexpected error processing message: {str(e)}")
         await message.reject(requeue=False)

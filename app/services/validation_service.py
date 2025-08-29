@@ -120,11 +120,19 @@ class ValidationService:
             
             return message, None
             
-        except Exception as e:
+        except (ValueError, TypeError) as e:
             error = ValidationError(
                 wrapper_id=wrapper_id,
                 error_type="validation_error",
                 error_message=str(e),
+                original_data=raw_data
+            )
+            return None, error
+        except Exception as e:
+            error = ValidationError(
+                wrapper_id=wrapper_id,
+                error_type="system_error",
+                error_message=f"Unexpected validation error: {str(e)}",
                 original_data=raw_data
             )
             return None, error
