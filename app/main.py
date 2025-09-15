@@ -6,6 +6,9 @@ from routes import router as api_router
 import logging
 from contextlib import asynccontextmanager
 
+# Import services to register consumers
+import services.data_ingestor
+
 logger = logging.getLogger(__name__)
 
 
