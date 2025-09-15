@@ -1,0 +1,11 @@
+.env
+.env.local
+
+# Logs
+logs
+*.log
+
+# python
+__pycache__/
+*.py[codz]
+

@@ -2,15 +2,11 @@ import json
 from datetime import datetime, UTC
 from schemas.message import DataMessage
 from typing import Optional, Dict, Any
-from dependencies.redis import get_redis
-from fastapi import Depends
-from redis.asyncio import Redis
+from dependencies.redis import redis_client
 
 class CacheService:
-    NOT_INITIALIZED_ERROR = "Cache service not initialized"
-
-    def __init__(self, redis: Redis):
-        self.redis = redis
+    def __init__(self):
+        self.redis = redis_client
         self.last_message_key = "last_message"
         self.last_message_metadata_key = "last_message_metadata"
 
@@ -46,6 +42,3 @@ class CacheService:
         
         return json.loads(data)
 
-    @classmethod
-    async def create(cls, redis: Redis = Depends(get_redis)):
-        return cls(redis) 
