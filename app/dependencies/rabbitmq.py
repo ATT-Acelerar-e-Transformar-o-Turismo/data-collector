@@ -1,4 +1,5 @@
 import asyncio
+import json
 import aio_pika
 from aio_pika.exceptions import AMQPConnectionError, AMQPChannelError
 import logging
@@ -55,15 +56,17 @@ class RabbitMQClient:
                     async for message in queue_iter:
                         try:
                             await handler(message)
-                        except Exception as e:
-                            logger.error(f"Error processing message in queue '{queue_name}': {e}")
-                            # Reject the message to prevent infinite retries
+                        except (json.JSONDecodeError, ValueError) as e:
+                            logger.error(f"Invalid message format in queue '{queue_name}': {e}")
                             await message.reject(requeue=False)
+                        except (AMQPConnectionError, AMQPChannelError) as e:
+                            logger.error(f"RabbitMQ connection error in queue '{queue_name}': {e}")
+                            await message.nack(requeue=True)
             except (AMQPConnectionError, AMQPChannelError) as e:
                 logger.error(f"Consumer for queue '{queue_name}' failed: {e}. Retrying in 5 seconds...")
                 await asyncio.sleep(5)
-            except Exception as e:
-                logger.error(f"Unexpected error in consumer for queue '{queue_name}': {e}. Retrying in 5 seconds...")
+            except KeyError as e:
+                logger.error(f"Configuration error in consumer for queue '{queue_name}': {e}. Retrying in 5 seconds...")
                 await asyncio.sleep(5)
             finally:
                 if not channel.is_closed:
@@ -75,15 +78,9 @@ class RabbitMQClient:
                         await new_channel.set_qos(prefetch_count=10)
                         await self.channel_pool.put(new_channel)
                         logger.info("Replaced closed channel in pool")
-                    except Exception as ex:
-                        logger.error(f"Failed to replace channel: {ex}")
-                        # If replacement fails, we must put SOMETHING back or pool drains. 
-                        # But putting back a closed channel is useless.
-                        # Ideally, we should loop until we can replace it.
+                    except (AMQPConnectionError, AMQPChannelError) as ex:
+                        logger.error(f"Failed to replace channel due to connection error: {ex}")
                         await asyncio.sleep(5)
-                        # For simplicity, put it back and let next iteration fail/retry if we really can't fix it
-                        # But actually, if we loop here, we block the consumer loop.
-                        # Let's just put it back for now, assuming robust connection will fix things eventually.
                         await self.channel_pool.put(channel)
 
     async def start_consumers(self):

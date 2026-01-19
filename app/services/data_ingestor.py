@@ -46,6 +46,6 @@ async def handle_data_message(message: aio_pika.abc.AbstractIncomingMessage):
     except (json.JSONDecodeError, ValueError) as e:
         logger.error(f"Invalid message format: {str(e)}")
         await message.reject(requeue=False)
-    except Exception as e:
-        logger.error(f"Unexpected error processing message: {str(e)}")
-        await message.reject(requeue=False)
+    except (ConnectionError, TimeoutError) as e:
+        logger.error(f"Connection error while processing message: {str(e)}")
+        await message.nack(requeue=True)
