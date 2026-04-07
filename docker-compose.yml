@@ -7,6 +7,7 @@ services:
     restart: always
     networks:
       - data-collector-network
+      - mq-network
     environment:
       - REDIS_URL=redis://data-collector-redis:6379
       - DATA_RABBITMQ_URL=amqp://user:password@data-mq:5672/
@@ -40,3 +41,4 @@ services:
 networks:
   data-collector-network:
     name: data-collector-network
+  mq-network: {}
